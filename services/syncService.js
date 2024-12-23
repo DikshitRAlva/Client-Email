@@ -15,9 +15,6 @@ const fetchEmailsWithRateLimitHandling = async (url, accessToken) => {
         headers: {
           Authorization: `Bearer ${accessToken}`,
         },
-        // params: {
-        //   $select: 'subject,body,bodyPreview,from,toRecipients,ccRecipients', // Select required fields
-        // },
       });
 
       if (response.status === 429) {
