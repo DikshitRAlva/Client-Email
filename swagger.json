@@ -1,0 +1,132 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "Email Client API",
+    "version": "1.0.0",
+    "description": "API for account creation and linking with Outlook."
+  },
+  "paths": {
+    "/api/auth/outlook": {
+      "get": {
+        "summary": "Generate login URL for Outlook OAuth.",
+        "responses": {
+          "200": {
+            "description": "Successfully generated login URL.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "loginUrl": { "type": "string" }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/auth/callback": {
+      "get": {
+        "summary": "Handle Outlook OAuth callback.",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "code",
+            "required": true,
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully authenticated user.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": { "type": "string" },
+                    "localId": { "type": "string" },
+                    "email": { "type": "string" }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/emails/{userId}": {
+      "get": {
+        "summary": "Retrieve locally stored emails for a specific user.",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "userId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "The local user ID whose emails you want to retrieve."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully retrieved emails.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": true
+                    },
+                    "emails": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": { "type": "string" },
+                          "subject": { "type": "string" },
+                          "sender": { "type": "string" },
+                          "body": { "type": "string" },
+                          "receivedDate": {
+                            "type": "string",
+                            "format": "date-time"
+                          }
+                        }
+                      },
+                      "example": [
+                        {
+                          "id": "1",
+                          "subject": "Welcome to the service",
+                          "sender": "support@example.com",
+                          "body": "Hello, welcome to our service!",
+                          "receivedDate": "2024-12-23T10:00:00Z"
+                        },
+                        {
+                          "id": "2",
+                          "subject": "Password Reset Request",
+                          "sender": "noreply@example.com",
+                          "body": "Click here to reset your password.",
+                          "receivedDate": "2024-12-22T10:00:00Z"
+                        }
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "No emails found for the provided user ID."
+          },
+          "500": {
+            "description": "Failed to retrieve emails due to internal error."
+          }
+        }
+      }
+    }
+  }
+}
